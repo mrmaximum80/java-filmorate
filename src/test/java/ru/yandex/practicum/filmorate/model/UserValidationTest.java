@@ -1,15 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import ru.yandex.practicum.filmorate.controller.UserController;
-import org.junit.jupiter.api.Test;
-
-import javax.validation.Valid;
-
-import static org.junit.jupiter.api.Assertions.*;
-import java.time.LocalDate;
+//import org.springframework.web.bind.MethodArgumentNotValidException;
+//import ru.yandex.practicum.filmorate.controller.UserController;
+//import org.junit.jupiter.api.Test;
+//
+//import javax.validation.Valid;
+//
+//import static org.junit.jupiter.api.Assertions.*;
+//import java.time.LocalDate;
 
 @SpringBootTest
 public class UserValidationTest {
