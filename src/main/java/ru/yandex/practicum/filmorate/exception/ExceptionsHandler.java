@@ -35,16 +35,16 @@ public class ExceptionsHandler {
                 .body(exception.getMostSpecificCause().getMessage());
     }
 
-    @ExceptionHandler(FilmAlreadyExistException.class)
-    public ResponseEntity<String> filmExistException(FilmAlreadyExistException exception) {
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<String> filmExistException(AlreadyExistException exception) {
         log.info(exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler(FilmNotFoundException.class)
-    public ResponseEntity<String> filmNotFoundException(FilmNotFoundException exception) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> filmNotFoundException(NotFoundException exception) {
         log.info(exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

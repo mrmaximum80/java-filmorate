@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.*;
@@ -27,7 +27,7 @@ public class FilmController {
         for (Film f : films.values()) {
             if (film.equals(f)) {
                 log.error("Фильм [" + film.getName() + "] уже есть в списке");
-                throw new FilmAlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
+                throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
             }
         }
         idCounter++;
@@ -43,7 +43,7 @@ public class FilmController {
             films.put(film.getId(), film);
             log.info("Фильм {} изменен", film.getName());
         } else {
-            throw new FilmNotFoundException("{\"message\": \"Фильм с id=" + film.getId() + " не найден\"}");
+            throw new NotFoundException("{\"message\": \"Фильм с id=" + film.getId() + " не найден\"}");
         }
         return film;
     }
