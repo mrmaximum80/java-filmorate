@@ -36,8 +36,8 @@ public class UserController {
                 throw new AlreadyExistException("Пользователь уже есть в списке");
             }
         }
-        idCounter++;
-        user.setId(idCounter);
+
+        user.setId(++idCounter);
         users.put(idCounter, user);
         log.info("Пользователь {} добавлен", user.getName());
         return user;

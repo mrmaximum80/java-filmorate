@@ -30,8 +30,8 @@ public class FilmController {
                 throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
             }
         }
-        idCounter++;
-        film.setId(idCounter);
+
+        film.setId(++idCounter);
         films.put(idCounter, film);
         log.info("Фильм {} добавлен", film.getName());
         return film;
