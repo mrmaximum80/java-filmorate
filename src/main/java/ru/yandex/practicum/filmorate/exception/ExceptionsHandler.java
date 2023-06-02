@@ -52,10 +52,4 @@ public class ExceptionsHandler {
                 .body(exception.getMessage());
     }
 
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ResponseEntity<String> notPositiveException(ConstraintViolationException ex) {
-//        log.info(ex.getMessage());
-//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-//    }
-
 }
