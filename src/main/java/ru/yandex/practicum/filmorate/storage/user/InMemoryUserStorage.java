@@ -26,9 +26,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
         for (User u : users.values()) {
             if (u.equals(user)) {
                 log.error("Пользователь уже есть в списке");
@@ -45,11 +42,8 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         if (users.containsKey(user.getId())) {
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-                log.info("Пользователь {} изменен", user.getName());
-            }
             users.put(user.getId(), user);
+            log.info("Пользователь {} изменен", user.getName());
         } else {
             throw new NotFoundException("{\"message\": \"Пользователь с id=" + user.getId() + " не найден\"}");
         }
@@ -58,11 +52,13 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(long id) {
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("{\"message\": \"Пользователь с id=" + id + " не найден\"}");
+        User user = users.get(id);
+        if (user == null) {
+            log.info("Пользователь с id={} не найден", id);
+        } else {
+            log.info("Пользователь с id={} найден", id);
         }
-        log.info("Пользователь с id={} найден", id);
-        return users.get(id);
+        return user;
     }
 
 }

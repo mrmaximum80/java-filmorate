@@ -8,10 +8,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.validation.Valid;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -24,33 +22,55 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    public List<User> getUsers() {
+        return userStorage.getUsers();
+    }
+
+    public User getUserById(long id) {
+        Optional<User> user = Optional.ofNullable(userStorage.getUserById(id));
+        return user.orElseThrow(() -> new NotFoundException("{\"message\": \"Пользователь с id=" + id + " не найден\"}"));
+    }
+
+    public User addUser(User user) {
+        checkUserName(user);
+        return userStorage.addUser(user);
+    }
+
+    public User updateUser(User user) {
+        checkUserName(user);
+        return userStorage.updateUser(user);
+    }
+
+    private void checkUserName(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+    }
+
+
     public User addFriend(long id, long friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
+        User user = getUserById(id);
+        User friend = getUserById(friendId);
         if (user.getFriends().contains(friendId)) {
             log.info("Пользователь c id={} уже есть в списке друзей", id);
             throw new AlreadyExistException("Пользователь уже есть в списке друзей");
         } else {
             user.getFriends().add(friendId);
-            userStorage.updateUser(user);
             friend.getFriends().add(id);
-            userStorage.updateUser(friend);
             log.info("Пользователи c id={} и {} теперь друзья", id, friendId);
         }
         return user;
     }
 
     public User deleteFriend(long id, long friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
+        User user = getUserById(id);
+        User friend = getUserById(friendId);
         if (!user.getFriends().contains(friendId)) {
             log.info("Пользователь c id={} отсутствует в списке друзей", id);
             throw new NotFoundException("Пользователь отсутствует в списке друзей");
         } else {
             user.getFriends().remove(friendId);
-            userStorage.updateUser(user);
             friend.getFriends().remove(id);
-            userStorage.updateUser(friend);
             log.info("Пользователи c id={} и {} больше не друзья", id, friendId);
         }
         return user;
