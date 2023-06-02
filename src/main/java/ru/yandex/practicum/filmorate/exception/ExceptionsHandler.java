@@ -57,4 +57,5 @@ public class ExceptionsHandler {
         log.info(ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
 }
