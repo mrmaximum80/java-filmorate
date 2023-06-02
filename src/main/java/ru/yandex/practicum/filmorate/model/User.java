@@ -9,13 +9,15 @@ import ru.yandex.practicum.filmorate.annotation.NonSpaces;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
 @AllArgsConstructor
 public class User {
-    private int id;
+    private long id;
 
     @Email(message = "Email должен иметь формат адреса электронной почты")
     private String email;
@@ -27,5 +29,7 @@ public class User {
 
     @Past(message = "День рождения должен содержать прошедшую дату")
     private LocalDate birthday;
+
+    private Set<Long> friends = new HashSet<>();
 
 }
