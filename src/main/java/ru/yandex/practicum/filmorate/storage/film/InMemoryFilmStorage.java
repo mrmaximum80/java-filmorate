@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -41,6 +38,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         if (films.containsKey(film.getId())) {
+            for (Film f : films.values()) {
+                if (film.equals(f) && film.getId() != f.getId()) {
+                    log.error("Фильм [" + film.getName() + "] уже есть в списке");
+                    throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
+                }
+            }
             films.put(film.getId(), film);
             log.info("Фильм {} изменен", film.getName());
         } else {
@@ -50,13 +53,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(long id) {
+    public Optional<Film> getFilmById(long id) {
         Film film = films.get(id);
         if (film == null) {
-            throw new NotFoundException("{\"message\": \"Пользователь с id=" + id + " не найден\"}");
-//            log.info("Пользователь с id={} не найден", id);
+            log.info("Пользователь с id={} не найден", id);
         }
         log.info("Пользователь с id={} найден", id);
-        return film;
+        return Optional.ofNullable(film);
     }
 }

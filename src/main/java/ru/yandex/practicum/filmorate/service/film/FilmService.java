@@ -7,8 +7,8 @@ import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userService = userService;
     }
 
     public List<Film> getFilms() {
@@ -33,7 +33,7 @@ public class FilmService {
     }
 
     public Film getFilmById(long id) {
-        Optional<Film> film = Optional.of(filmStorage.getFilmById(id));
+        Optional<Film> film = filmStorage.getFilmById(id);
         return film.orElseThrow(() -> new NotFoundException("{\"message\": \"Фильм с id=" + id + " не найден\"}"));
     }
 
@@ -46,8 +46,8 @@ public class FilmService {
     }
 
     public Film addLike(long id, long userId) {
-        Film film = filmStorage.getFilmById(id);
-        User user = userStorage.getUserById(userId);
+        Film film = getFilmById(id);
+        User user = userService.getUserById(userId);
 
         if (film.getLikes().contains(userId)) {
             log.info("Пользователя c id={} уже поставил лайк фильму", id);
@@ -61,7 +61,7 @@ public class FilmService {
 
     public Film deleteLike(long id, long userId) {
         Film film = getFilmById(id);
-        User user = userStorage.getUserById(userId);
+        User user = userService.getUserById(userId);
         if (!film.getLikes().contains(userId)) {
             log.info("Пользователь c id={} не ставил лайк фильму c id={}", userId, id);
             throw new NotFoundException("Пользователь с id=" + userId + " не ставил лайк фильму с id=" + id + ".");
@@ -73,7 +73,7 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
-        List<Film> popularFilms = filmStorage.getFilms().stream().sorted(new Comparator<Film>() {
+        List<Film> popularFilms = getFilms().stream().sorted(new Comparator<Film>() {
             @Override
             public int compare(Film o1, Film o2) {
                 return o2.getRate() - o1.getRate();

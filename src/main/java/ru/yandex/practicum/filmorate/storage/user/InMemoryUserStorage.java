@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -27,9 +24,9 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User addUser(User user) {
         for (User u : users.values()) {
-            if (u.equals(user)) {
-                log.error("Пользователь уже есть в списке");
-                throw new AlreadyExistException("Пользователь уже есть в списке");
+            if (u.getEmail().equals(user.getEmail()) || u.getLogin().equals(user.getLogin())) {
+                log.error("Пользователь с таким email/login уже есть в списке");
+                throw new AlreadyExistException("Пользователь с таким email/login уже есть в списке");
             }
         }
 
@@ -42,6 +39,13 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         if (users.containsKey(user.getId())) {
+            for (User u : users.values()) {
+                if ((u.getEmail().equals(user.getEmail()) || u.getLogin().equals(user.getLogin()))
+                        && (u.getId() != user.getId())) {
+                    log.error("Пользователь с таким email/login уже есть в списке");
+                    throw new AlreadyExistException("Пользователь с таким email/login уже есть в списке");
+                }
+            }
             users.put(user.getId(), user);
             log.info("Пользователь {} изменен", user.getName());
         } else {
@@ -51,14 +55,14 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(long id) {
+    public Optional<User> getUserById(long id) {
         User user = users.get(id);
         if (user == null) {
             log.info("Пользователь с id={} не найден", id);
         } else {
             log.info("Пользователь с id={} найден", id);
         }
-        return user;
+        return Optional.ofNullable(user);
     }
 
 }
