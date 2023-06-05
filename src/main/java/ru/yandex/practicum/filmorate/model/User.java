@@ -1,22 +1,25 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.annotation.NonSpaces;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
 @AllArgsConstructor
 public class User {
-    private int id;
+    private long id;
 
+    @NotEmpty
     @Email(message = "Email должен иметь формат адреса электронной почты")
     private String email;
 
@@ -25,7 +28,11 @@ public class User {
 
     private String name;
 
-    @Past(message = "День рождения должен содержать прошедшую дату")
+    @NotNull
+    @PastOrPresent(message = "День рождения должен содержать прошедшую дату")
     private LocalDate birthday;
+
+    @JsonIgnore
+    private Set<Long> friends = new HashSet<>();
 
 }

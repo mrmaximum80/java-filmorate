@@ -39,7 +39,7 @@ public class ExceptionsHandler {
     public ResponseEntity<String> filmExistException(AlreadyExistException exception) {
         log.info(exception.getMessage());
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());
     }
 
@@ -48,6 +48,14 @@ public class ExceptionsHandler {
         log.info(exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<String> filmNotFoundException(Throwable exception) {
+        log.info(exception.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(exception.getMessage());
     }
 }

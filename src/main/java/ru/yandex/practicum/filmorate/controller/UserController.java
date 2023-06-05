@@ -1,59 +1,57 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
-@Slf4j
 public class UserController {
 
-    private int idCounter = 0;
-    private final Map<Integer, User> users = new HashMap<>();
+    private final UserService userService;
 
     @GetMapping
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable long id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        for (User u : users.values()) {
-            if (u.equals(user)) {
-                log.error("Пользователь уже есть в списке");
-                throw new AlreadyExistException("Пользователь уже есть в списке");
-            }
-        }
-
-        user.setId(++idCounter);
-        users.put(idCounter, user);
-        log.info("Пользователь {} добавлен", user.getName());
-        return user;
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (users.containsKey(user.getId())) {
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-                log.info("Пользователь {} изменен", user.getName());
-            }
-            users.put(user.getId(), user);
-        } else {
-            throw new NotFoundException("{\"message\": \"Пользователь с id=" + user.getId() + " не найден\"}");
-        }
-        return user;
+        return userService.updateUser(user);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable long id) {
+        return userService.getUserFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }
