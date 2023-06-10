@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.annotation.After;
@@ -31,7 +30,11 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
 
-    @JsonIgnore
+    private Mpa mpa;
+
+    private Set<Genre> genres = new HashSet<>();
+
+    //    @JsonIgnore
     private Set<Long> likes = new HashSet<>();
 
     public int getRate() {
