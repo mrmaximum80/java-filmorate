@@ -80,12 +80,12 @@ public class UserDbStorage implements UserStorage {
                 }
             }
             String sql = "update users set email = ?, login = ?, name = ?, birthday = ? where id = ?;";
-            jdbcTemplate.update(sql
-                    , user.getEmail()
-                    , user.getLogin()
-                    , user.getName()
-                    , user.getBirthday()
-                    , user.getId());
+            jdbcTemplate.update(sql,
+                    user.getEmail(),
+                    user.getLogin(),
+                    user.getName(),
+                    user.getBirthday(),
+                    user.getId());
             log.info("Пользователь {} изменен", user.getName());
 
             long id = user.getId();
