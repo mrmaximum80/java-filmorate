@@ -92,12 +92,12 @@ public class FilmDbStorage implements FilmStorage {
             }
             String sql = "update films set name = ?, description = ?, release_date = ?, duration = ?" +
                     " where id = ?;";
-            jdbcTemplate.update(sql
-                    , film.getName()
-                    , film.getDescription()
-                    , film.getReleaseDate()
-                    , film.getDuration()
-                    , film.getId());
+            jdbcTemplate.update(sql,
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getId());
             log.info("Пользователь {} изменен", film.getName());
 
             long id = film.getId();
