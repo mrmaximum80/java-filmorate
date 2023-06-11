@@ -42,12 +42,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        List<User> users = getUsers();
-        for (User u : users) {
-            if (u.getEmail().equals(user.getEmail()) || u.getLogin().equals(user.getLogin())) {
-                log.error("Пользователь с таким email/login уже есть в списке");
+
+        if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users WHERE email = ? OR login = ?",Integer.class,
+                user.getEmail(), user.getLogin()) != 0) {
+            log.error("Пользователь с таким email/login уже есть в списке");
                 throw new AlreadyExistException("Пользователь с таким email/login уже есть в списке");
-            }
         }
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
@@ -70,14 +69,13 @@ public class UserDbStorage implements UserStorage {
     public User updateUser(User user) {
         Optional<User> userForUpdate = getUserById(user.getId());
         if (userForUpdate.isPresent()) {
-            List<User> users = getUsers();
-            for (User u : users) {
-                if ((u.getEmail().equals(user.getEmail()) || u.getLogin().equals(user.getLogin()))
-                        && (u.getId() != user.getId())) {
-                    log.error("Пользователь с таким email/login уже есть в списке");
-                    throw new AlreadyExistException("Пользователь с таким email/login уже есть в списке");
-                }
+            if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users WHERE email = ? OR login = ? AND id != ?",
+                    Integer.class,
+                    user.getEmail(), user.getLogin(), user.getId()) != 0) {
+                log.error("Пользователь с таким email/login уже есть в списке");
+                throw new AlreadyExistException("Пользователь с таким email/login уже есть в списке");
             }
+
             String sql = "update users set email = ?, login = ?, name = ?, birthday = ? where id = ?;";
             jdbcTemplate.update(sql,
                     user.getEmail(),
