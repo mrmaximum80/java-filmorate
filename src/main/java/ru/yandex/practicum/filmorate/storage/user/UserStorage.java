@@ -15,4 +15,8 @@ public interface UserStorage {
 
     Optional<User> getUserById(long id);
 
+    void addFriend(long userId, long friendId);
+
+    void deleteFriend(long userId, long friendId);
+
 }

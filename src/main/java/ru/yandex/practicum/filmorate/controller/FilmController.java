@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -16,6 +17,7 @@ import java.util.*;
 @RequestMapping("/films")
 public class FilmController {
 
+    @Autowired
     private final FilmService filmService;
 
     @GetMapping
@@ -50,7 +52,7 @@ public class FilmController {
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10")
-                                          @Positive int count) {
+                                      @Positive int count) {
         return filmService.getPopularFilms(count);
     }
 }

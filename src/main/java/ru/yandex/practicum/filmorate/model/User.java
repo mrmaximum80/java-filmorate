@@ -1,10 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import ru.yandex.practicum.filmorate.annotation.NonSpaces;
 
 import javax.validation.constraints.*;

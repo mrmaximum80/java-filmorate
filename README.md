@@ -1,3 +1,3 @@
 # java-filmorate
 Template repository for Filmorate project.
-![Shema](https://github.com/mrmaximum80/java-filmorate/blob/b844ebe8aed662ae30cf742a2f4c120545c7b5f6/src/main/resources/db_shema.png)
+![DB_schema](https://github.com/mrmaximum80/java-filmorate/blob/43bc09f4a76d28d9c719631954de93832e7d78d1/src/main/resources/DB_schema.png)

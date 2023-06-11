@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
 
-@Component
+@Component("inMemoryFilmStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
@@ -60,5 +60,15 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         log.info("Пользователь с id={} найден", id);
         return Optional.ofNullable(film);
+    }
+
+    @Override
+    public void addLike(long filmId, long userId) {
+
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+
     }
 }

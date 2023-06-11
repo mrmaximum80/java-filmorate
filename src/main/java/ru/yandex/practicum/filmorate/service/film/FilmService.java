@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -23,7 +24,8 @@ public class FilmService {
     private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       UserService userService) {
         this.filmStorage = filmStorage;
         this.userService = userService;
     }
@@ -53,10 +55,10 @@ public class FilmService {
             log.info("Пользователя c id={} уже поставил лайк фильму", id);
             throw new AlreadyExistException("Пользователь с id=" + userId + " уже поставил лайк фильму.");
         } else {
-            film.getLikes().add(userId);
+            filmStorage.addLike(id, userId);
             log.info("Фильму с id={} добавлен лайк пользователя c id={}", id, userId);
         }
-        return film;
+        return getFilmById(id);
     }
 
     public Film deleteLike(long id, long userId) {
@@ -66,7 +68,7 @@ public class FilmService {
             log.info("Пользователь c id={} не ставил лайк фильму c id={}", userId, id);
             throw new NotFoundException("Пользователь с id=" + userId + " не ставил лайк фильму с id=" + id + ".");
         } else {
-            film.getLikes().remove(userId);
+            filmStorage.deleteLike(id, userId);
             log.info("У фильма с id={} удален лайк пользователя c id={}", id, userId);
         }
         return film;

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -18,7 +19,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -48,11 +49,10 @@ public class UserService {
             log.info("Пользователь c id={} уже есть в списке друзей", id);
             throw new AlreadyExistException("Пользователь уже есть в списке друзей");
         } else {
-            user.getFriends().add(friendId);
-            friend.getFriends().add(id);
+            userStorage.addFriend(id, friendId);
             log.info("Пользователи c id={} и {} теперь друзья", id, friendId);
         }
-        return user;
+        return getUserById(id);
     }
 
     public User deleteFriend(long id, long friendId) {
@@ -62,8 +62,7 @@ public class UserService {
             log.info("Пользователь c id={} отсутствует в списке друзей", id);
             throw new NotFoundException("Пользователь отсутствует в списке друзей");
         } else {
-            user.getFriends().remove(friendId);
-            friend.getFriends().remove(id);
+            userStorage.deleteFriend(id, friendId);
             log.info("Пользователи c id={} и {} больше не друзья", id, friendId);
         }
         return user;
