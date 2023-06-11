@@ -45,13 +45,14 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        List<Film> films = getFilms();
-        for (Film f : films) {
-            if (film.equals(f)) {
-                log.error("Фильм [" + film.getName() + "] уже есть в списке");
+
+        if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM films WHERE name = ? AND description = ? " +
+                        "AND release_date = ? AND duration = ?",Integer.class,
+                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration()) != 0) {
+            log.error("Фильм [" + film.getName() + "] уже есть в списке");
                 throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
-            }
         }
+        
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
                 .usingGeneratedKeyColumns("id");
@@ -83,13 +84,14 @@ public class FilmDbStorage implements FilmStorage {
     public Film updateFilm(Film film) {
         Optional<Film> filmForUpdate = getFilmById(film.getId());
         if (filmForUpdate.isPresent()) {
-            List<Film> films = getFilms();
-            for (Film f : films) {
-                if (film.equals(f) && film.getId() != f.getId()) {
-                    log.error("Фильм [" + film.getName() + "] уже есть в списке");
-                    throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
-                }
+            if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM films WHERE name = ? AND description = ? " +
+                            "AND release_date = ? AND duration = ? AND id != ?",Integer.class,
+                    film.getName(), film.getDescription(), film.getReleaseDate(),
+                    film.getDuration(), film.getId()) != 0) {
+                log.error("Фильм [" + film.getName() + "] уже есть в списке");
+                throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
             }
+
             String sql = "update films set name = ?, description = ?, release_date = ?, duration = ?" +
                     " where id = ?;";
             jdbcTemplate.update(sql,
