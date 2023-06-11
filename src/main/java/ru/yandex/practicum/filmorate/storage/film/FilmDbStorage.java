@@ -47,12 +47,12 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilm(Film film) {
 
         if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM films WHERE name = ? AND description = ? " +
-                        "AND release_date = ? AND duration = ?",Integer.class,
+                        "AND release_date = ? AND duration = ?", Integer.class,
                 film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration()) != 0) {
             log.error("Фильм [" + film.getName() + "] уже есть в списке");
-                throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
+            throw new AlreadyExistException("Фильм '" + film.getName() + "' уже есть в списке");
         }
-        
+
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
                 .usingGeneratedKeyColumns("id");
@@ -85,7 +85,7 @@ public class FilmDbStorage implements FilmStorage {
         Optional<Film> filmForUpdate = getFilmById(film.getId());
         if (filmForUpdate.isPresent()) {
             if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM films WHERE name = ? AND description = ? " +
-                            "AND release_date = ? AND duration = ? AND id != ?",Integer.class,
+                            "AND release_date = ? AND duration = ? AND id != ?", Integer.class,
                     film.getName(), film.getDescription(), film.getReleaseDate(),
                     film.getDuration(), film.getId()) != 0) {
                 log.error("Фильм [" + film.getName() + "] уже есть в списке");
